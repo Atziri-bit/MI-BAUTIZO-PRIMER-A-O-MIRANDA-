@@ -78,20 +78,20 @@
   <p class="texto">
     A ser parte de un día muy especial en nuestras vidas:<br>
     <strong>
-      el Bautizo y Primer Año de nuestra hija Miranda.
+     Bautizismo & Primer Año de nuestra hija <br> Miranda.
     </strong>
   </p>
 
   <div class="tarjeta-oracion">
     <p>
-      “Señor, hoy me presentan ante Ti para ser cubierta con
+      “Señor, hoy me presentan ante ti para ser cubierta con
       la gracia de tu amor. Toma mi pequeño corazón en tus
       benditas manos y jamás te separes de mí.”
     </p>
   </div>
 
   <div class="familia">
-    <span>Con amor,</span>
+    <span>Con amor, mis papis</span>
     <strong>Enrique Reyes &amp; Montserrat Chávez</strong>
   </div>
 
@@ -168,7 +168,7 @@
       class="btn"
       type="button"
       data-ir="lugares">
-      Ver lugares
+      Continuar ♡
     </button>
 
   </div>
@@ -242,7 +242,7 @@
       class="btn"
       type="button"
       data-ir="padrinos">
-      Mis padrinos
+      Continuar ♡
     </button>
 
   </div>
@@ -388,10 +388,260 @@
   aria-label="Final">
 </button>
 ```
-
   </nav>
 
-  <script src="script.js"></script>
+ <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pantallas = document.querySelectorAll(".pantalla");
+    const puntos = document.querySelectorAll(".punto");
+
+    const musica = document.getElementById("musica");
+    const musicBtn = document.getElementById("musicBtn");
+    const comenzarBtn = document.getElementById("comenzarBtn");
+    const whatsappBtn = document.getElementById("whatsappBtn");
+
+
+    /* =====================================
+       CAMBIAR DE PANTALLA
+    ===================================== */
+
+    function irA(id) {
+
+        const destino = document.getElementById(id);
+
+        if (!destino) {
+            console.error("No existe la pantalla:", id);
+            return;
+        }
+
+        pantallas.forEach(function(pantalla) {
+            pantalla.classList.remove("activa");
+        });
+
+        destino.classList.add("activa");
+
+
+        /* Actualizar puntos */
+
+        const indice = Array.from(pantallas).indexOf(destino);
+
+        puntos.forEach(function(punto, i) {
+
+            punto.classList.toggle(
+                "activo",
+                i === indice
+            );
+
+        });
+
+
+        /* Reiniciar animaciones */
+
+        destino.querySelectorAll(".reveal").forEach(function(elemento) {
+
+            elemento.style.animation = "none";
+
+            void elemento.offsetWidth;
+
+            elemento.style.animation = "";
+
+        });
+
+    }
+
+
+    /* =====================================
+       BOTONES DE NAVEGACIÓN
+    ===================================== */
+
+    document.querySelectorAll("[data-ir]").forEach(function(boton) {
+
+        boton.addEventListener("click", function() {
+
+            const destino = boton.getAttribute("data-ir");
+
+            irA(destino);
+
+        });
+
+    });
+
+
+    /* =====================================
+       MÚSICA
+    ===================================== */
+
+    async function reproducirMusica() {
+
+        try {
+
+            await musica.play();
+
+            musicBtn.classList.add("playing");
+
+            musicBtn.textContent = "♫";
+
+            musicBtn.setAttribute(
+                "aria-label",
+                "Pausar música"
+            );
+
+        } catch (error) {
+
+            console.log(
+                "No se pudo reproducir la música:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================
+       ABRIR INVITACIÓN
+    ===================================== */
+
+    comenzarBtn.addEventListener("click", async function() {
+
+        await reproducirMusica();
+
+        irA("mensaje");
+
+    });
+
+
+    /* =====================================
+       BOTÓN DE MÚSICA
+    ===================================== */
+
+    musicBtn.addEventListener("click", async function() {
+
+        if (musica.paused) {
+
+            try {
+
+                await musica.play();
+
+                musicBtn.classList.add("playing");
+
+                musicBtn.textContent = "♫";
+
+                musicBtn.setAttribute(
+                    "aria-label",
+                    "Pausar música"
+                );
+
+            } catch (error) {
+
+                alert(
+                    "No se pudo reproducir la música. Revisa que esté en assets/musica.mp3"
+                );
+
+            }
+
+        } else {
+
+            musica.pause();
+
+            musicBtn.classList.remove("playing");
+
+            musicBtn.textContent = "♪";
+
+            musicBtn.setAttribute(
+                "aria-label",
+                "Reproducir música"
+            );
+
+        }
+
+    });
+
+
+    /* =====================================
+       WHATSAPP
+    ===================================== */
+
+    const NUMERO_WHATSAPP = "7737311217";
+
+    if (NUMERO_WHATSAPP !== "527737311217") {
+
+        const mensaje = encodeURIComponent(
+            "Hola, confirmo mi asistencia al Bautizo y Primer Año de Miranda Reyes Chávez. 💕"
+        );
+
+        whatsappBtn.href =
+            "https://wa.me/" +
+            NUMERO_WHATSAPP +
+            "?text=" +
+            mensaje;
+
+    } else {
+
+        whatsappBtn.addEventListener("click", function(evento) {
+
+            evento.preventDefault();
+
+            alert(
+                "Para activar este botón, cambia el número de WhatsApp en el código."
+            );
+
+        });
+
+    }
+
+
+    /* =====================================
+       FLECHAS DEL TECLADO
+    ===================================== */
+
+    document.addEventListener("keydown", function(evento) {
+
+        if (
+            evento.key !== "ArrowRight" &&
+            evento.key !== "ArrowLeft"
+        ) {
+            return;
+        }
+
+        const actual = Array.from(pantallas).findIndex(
+            function(pantalla) {
+                return pantalla.classList.contains("activa");
+            }
+        );
+
+        const siguiente =
+            evento.key === "ArrowRight"
+                ? actual + 1
+                : actual - 1;
+
+        if (
+            siguiente >= 0 &&
+            siguiente < pantallas.length
+        ) {
+
+            irA(pantallas[siguiente].id);
+
+        }
+
+    });
+
+
+    /* =====================================
+       INICIO
+    ===================================== */
+
+    irA("inicio");
+
+});
+
+</script>
 
 </body>
 </html>
+
+
+
+
